@@ -97,8 +97,8 @@ async function showColor(event) {
     if (!td.querySelector("img")) {
         const img = document.createElement("img");
         img.src = currentGif;
-        img.style.width = "10em";
-        img.style.height = "10em";
+        img.style.width = "3em";
+        img.style.height = "3em";
         td.appendChild(img);
     } else {
         td.querySelector("img").style.visibility = "visible";
@@ -138,17 +138,20 @@ function checkEndGame() {
     }
 
     //create "You solved it" message
-    let allert = document.createElement("h2");
-    let solvedIt = document.createTextNode("You solved it!");
+    let allert = document.createElement("h3");
+    let solvedIt = document.createTextNode("Du hast es gelöst!");
+    let table = document.getElementById("memory");
     allert.appendChild(solvedIt);
-    document.body.appendChild(allert);
+    table.parentNode.insertBefore(allert, table.nextSibling);
+    //document.body.appendChild(allert);
 
     //create restart button
     let restart = document.createElement("button");
-    let textButton = document.createTextNode("New Game");
+    let textButton = document.createTextNode("Neues Spiel");
     restart.appendChild(textButton);
+    allert.parentNode.insertBefore(restart, allert.nextSibling);
     restart.onclick = reload;
-    document.body.appendChild(restart);
+    /*document.body.appendChild(restart);*/
     restart.focus();
 }
 
