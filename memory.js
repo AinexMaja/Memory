@@ -1,9 +1,5 @@
 let table = document.querySelector('table');
 let cells = table.getElementsByTagName('td');
-//set all background colors to transparent
-for (let i = 0; i < cells.length; i++) {
-    cells[i].style.backgroundColor = "transparent";
-}
 
 //Array for the final colors
 let shuffledArray = [];
@@ -27,8 +23,6 @@ async function buildGame() {
     shuffledArray = shuffledArray.sort((a, b) => 0.5 - Math.random());
     console.log(shuffledArray);
 }
-
-//buildGame();
 
 async function generateCards() {
     // playfield size
@@ -85,65 +79,75 @@ async function fetchGIFs() {
 
 //show color in the clicked field 
 async function showColor(event) {
-    //cancel click if checkGame is still running
     if (isProcessing) return;
-    let td = event.target;
-    currentId = event.target.id;
+    let td = event.target.closest("td"); 
+    currentId = td.id;
     let currentGif = shuffledArray[currentId].gif;
     currentColor = shuffledArray[currentId].color;
-    //display color of the field
-    td.style.backgroundColor = currentColor;
-    //display gif
+
+    //flip the card (add class "flipped")
+    let card = td.querySelector(".card");
+    if (card.classList.contains("flipped")) return; // ignore clicks on the same card
+    card.classList.add("flipped");
+
+    //Display color of card
+    let back = td.querySelector(".back");
+    back.style.backgroundColor = currentColor;
+
+    // Display GIF
     if (!td.querySelector("img")) {
         const img = document.createElement("img");
         img.src = currentGif;
         img.style.width = "3em";
         img.style.height = "3em";
-        td.appendChild(img);
+        td.querySelector(".back").appendChild(img);
     } else {
         td.querySelector("img").style.visibility = "visible";
     }
-    //check game every second move
+
+    // Check game every second move
     if (count % 2 == 1) {
         isProcessing = true;
-        //wait so the player can see cards, even if its not a pair
         await sleep(1500);
         checkGame();
         isProcessing = false;
     }
-    //update color and id
+
     lastColor = currentColor;
     lastId = currentId;
-    //increase count
     count++;
 }
 
-//check if the player has found a pair or not
+// Check game adjustment: Flip the cards back if not a pair
 async function checkGame() {
-    //reset color and gif if it's not a pair
+    const currentCard = cells[currentId].querySelector(".card");
+    const lastCard = cells[lastId].querySelector(".card");
     if (currentColor != lastColor) {
-        cells[currentId].style.backgroundColor = "transparent";
-        cells[currentId].querySelector("img").style.visibility = "hidden";
-
-        cells[lastId].style.backgroundColor = "transparent";
-        cells[lastId].querySelector("img").style.visibility = "hidden"
+        currentCard.classList.remove("flipped");
+        lastCard.classList.remove("flipped");
+    }
+    else{
+        currentCard.remove();
+        lastCard.remove();
     }
     checkEndGame();
 }
 
-function checkEndGame() {
-    //check if any field is still transparent
-    for (i = 0; i < cells.length; i++) {
-        if (cells[i].style.backgroundColor === "transparent") return false;
-    }
 
+function checkEndGame() {
+    //find all cards
+    const allCards = document.querySelectorAll('.card');
+
+    //ckeck if cards contain "flipped"-class
+    for (let card of allCards) {
+        if (!card.classList.contains('flipped')) return false;
+    }
     //create "You solved it" message
     let allert = document.createElement("h3");
     let solvedIt = document.createTextNode("Du hast es gelöst!");
     let table = document.getElementById("memory");
     allert.appendChild(solvedIt);
     table.parentNode.insertBefore(allert, table.nextSibling);
-    //document.body.appendChild(allert);
 
     //create restart button
     let restart = document.createElement("button");
@@ -151,7 +155,6 @@ function checkEndGame() {
     restart.appendChild(textButton);
     allert.parentNode.insertBefore(restart, allert.nextSibling);
     restart.onclick = reload;
-    /*document.body.appendChild(restart);*/
     restart.focus();
 }
 
