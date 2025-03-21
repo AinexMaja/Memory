@@ -1,5 +1,5 @@
 let table = document.querySelector('table');
-let cells = table.getElementsByTagName('td');
+let cells;
 
 //Array for the final colors
 let shuffledArray = [];
@@ -11,10 +11,24 @@ let currentColor = -1;
 let currentId = -1;
 let lastId = -1;
 
+let topic;
+let size;
+let img_count
+
 //variable to check if the game is getting checked (so you can't click) or not
 let isProcessing = false;
 
-async function buildGame() {
+async function startGame() {
+    topic = document.getElementById('topic').value;   
+    size = parseInt(document.getElementById('size').value);
+    document.documentElement.style.setProperty('--size', size);
+     
+    document.getElementById('start-screen').classList.add('hidden');
+    document.getElementById('game').classList.remove('hidden');
+
+    generatePlayfield(size);
+    cells = table.getElementsByTagName('td');
+
     //create card array with colors and gifs
     const cardArray = await generateCards();
 
@@ -24,11 +38,31 @@ async function buildGame() {
     console.log(shuffledArray);
 }
 
+
+function generatePlayfield(size) {
+    const table = document.getElementById("memory");
+    table.innerHTML = ""; // Leere das Spielfeld, falls es bereits existiert
+
+    for (let row = 0; row < size; row++) {
+        const tr = document.createElement("tr");
+        for (let col = 0; col < size; col++) {
+            const td = document.createElement("td");
+            td.id = row * size + col; // Eindeutige ID für jede Zelle
+            td.innerHTML = `
+                <div class="card">
+                    <div class="front"></div>
+                    <div class="back"></div>
+                </div>
+            `;
+            tr.appendChild(td);
+        }
+        table.appendChild(tr);
+    }
+}
+
 async function generateCards() {
     // playfield size
-    var sx = 4;
-    var sy = 4;
-    const img_count = sx * sy / 2;
+    img_count = size * size / 2;
 
     //generate an array with a color and a gif
     const cardArray = [];
@@ -58,8 +92,7 @@ function generateHslaColors(saturation, lightness, alpha, amount) {
 
 async function fetchGIFs() {
     let APIKey = "PxvvXnrkxxmzpfL8fePtSHBDWxVcNVQd";
-    let topic = "cats";
-    let url = "https://api.giphy.com/v1/gifs/search?api_key=" + APIKey + "&q=" + topic + "&limit=8";
+    let url = "https://api.giphy.com/v1/gifs/search?api_key=" + APIKey + "&q=" + topic + "&limit=" + img_count;
     const gifArray = [];
 
     try {
@@ -87,7 +120,7 @@ async function showColor(event) {
 
     //flip the card (add class "flipped")
     let card = td.querySelector(".card");
-    if (card.classList.contains("flipped")) return; // ignore clicks on the same card
+    //if (card.classList.contains("flipped")) return; // ignore clicks on the same card
     card.classList.add("flipped");
 
     //Display color of card
@@ -98,8 +131,8 @@ async function showColor(event) {
     if (!td.querySelector("img")) {
         const img = document.createElement("img");
         img.src = currentGif;
-        img.style.width = "3em";
-        img.style.height = "3em";
+        /*img.style.width = "3em";
+        img.style.height = "3em";*/
         td.querySelector(".back").appendChild(img);
     } else {
         td.querySelector("img").style.visibility = "visible";

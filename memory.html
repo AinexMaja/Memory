@@ -6,114 +6,26 @@
     <link rel="stylesheet" href="memory.css">
 </head>
 
-<body onload=buildGame();>
+<body>
     <h1>Memory</h1>
-    <table id="memory" onclick=showColor(event);>
-        <tr>
-            <td id="0"> 
-                <div class="card">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                </div>
-            </td>
-            <td id="1"> 
-                <div class="card">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                </div>
-            </td>
-            <td id="2"> 
-                <div class="card">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                </div>
-            </td>
-            <td id="3"> 
-                <div class="card">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td id="4"> 
-                <div class="card">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                </div>
-            </td>
-            <td id="5"> 
-                <div class="card">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                </div>
-            </td>
-            <td id="6"> 
-                <div class="card">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                </div>
-            </td>
-            <td id="7"> 
-                <div class="card">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td id="8"> 
-                <div class="card">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                </div>
-            </td>
-            <td id="9"> 
-                <div class="card">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                </div>
-            </td>
-            <td id="10"> 
-                <div class="card">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                </div>
-            </td>
-            <td id="11"> 
-                <div class="card">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td id="12"> 
-                <div class="card">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                </div>
-            </td>
-            <td id="13"> 
-                <div class="card">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                </div>
-            </td>
-            <td id="14"> 
-                <div class="card">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                </div>
-            </td>
-            <td id="15"> 
-                <div class="card">
-                    <div class="front"></div>
-                    <div class="back"></div>
-                </div>
-            </td>
-        </tr>
-    </table>
+    <div id="start-screen">
+        <label for="size">Spielfeldgröße:</label>
+        <select id="size">
+            <option value="4">4x4</option>
+            <option value="6">6x6</option>
+            <option value="8">8x8</option>
+        </select>
+        <br>
+        <label for="topic">Wähle ein Thema:</label><br>
+        <input type="text" id="topic" name="topic" placeholder="z.B. Katzen" required><br>
+        <br>
+        <button onclick="startGame()">Spiel starten</button>
+    </div>
+
+    <div id="game" class="hidden">
+        <table id="memory" onclick=showColor(event);>
+        </table>
+    </div>
 </body>
 <script type="text/javascript" src="memory.js"></script>
 
