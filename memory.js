@@ -1,5 +1,5 @@
 let table = document.querySelector('table');
-let cells;
+let cells = table.getElementsByTagName('td');
 
 //Array for the final colors
 let shuffledArray = [];
@@ -14,20 +14,27 @@ let lastId = -1;
 let topic;
 let size;
 let img_count
+let rows;
+let cols;
 
 //variable to check if the game is getting checked (so you can't click) or not
 let isProcessing = false;
 
 async function startGame() {
     topic = document.getElementById('topic').value;   
-    size = parseInt(document.getElementById('size').value);
+    const selectedOption = document.querySelector('#size option:checked');
+    rows = selectedOption.dataset.rows;
+    cols = selectedOption.dataset.cols;
+    size = rows;
+
+    //set CSS Property
     document.documentElement.style.setProperty('--size', size);
      
+    //Display the game-screen
     document.getElementById('start-screen').classList.add('hidden');
     document.getElementById('game').classList.remove('hidden');
 
-    generatePlayfield(size);
-    cells = table.getElementsByTagName('td');
+    generatePlayfield(rows, cols);
 
     //create card array with colors and gifs
     const cardArray = await generateCards();
@@ -39,15 +46,12 @@ async function startGame() {
 }
 
 
-function generatePlayfield(size) {
-    const table = document.getElementById("memory");
-    table.innerHTML = ""; // Leere das Spielfeld, falls es bereits existiert
-
-    for (let row = 0; row < size; row++) {
+function generatePlayfield(rows, cols) {
+    for (let row = 0; row < rows; row++) {
         const tr = document.createElement("tr");
-        for (let col = 0; col < size; col++) {
+        for (let col = 0; col < cols; col++) {
             const td = document.createElement("td");
-            td.id = row * size + col; // Eindeutige ID für jede Zelle
+            td.id = row * cols + col; // Eindeutige ID für jede Zelle
             td.innerHTML = `
                 <div class="card">
                     <div class="front"></div>
@@ -62,7 +66,7 @@ function generatePlayfield(size) {
 
 async function generateCards() {
     // playfield size
-    img_count = size * size / 2;
+    img_count = rows * cols / 2;
 
     //generate an array with a color and a gif
     const cardArray = [];

@@ -7,7 +7,39 @@ body {
     user-select: none;
 }
 
+#start-screen {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+label {
+    font-size: 1em;
+    font-weight: bold;
+    display: block;
+    margin: 10px 0 5px;
+    color: #333;
+}
+
+select, input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    text-align: center;
+}
+
 .hidden { display: none; }
+
 
 #player {
     position: absolute;
@@ -75,9 +107,8 @@ table {
 }
 
 button {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
+    transform: none;
     padding: 0.5em 1.5em;
     margin-bottom: 1em;
     background-color: #1162ca;
@@ -92,6 +123,11 @@ button {
 
 button:hover {
     background-color: #083d81;
+    background-color: #072c60;
+}
+
+button:active {
+    transform: scale(1.05);
 }
 
 
