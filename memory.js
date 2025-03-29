@@ -1,5 +1,5 @@
-let table = document.querySelector('table');
-let cells = table.getElementsByTagName('td');
+const table = document.querySelector('table');
+const cells = table.getElementsByTagName('td');
 
 //Array for the final colors
 let shuffledArray = [];
@@ -12,24 +12,16 @@ let currentId = -1;
 let lastId = -1;
 
 let topic;
-let size;
-let img_count
-let rows;
-let cols;
 
-//variable to check if the game is getting checked (so you can't click) or not
-let isProcessing = false;
-
-async function startGame() {
-    topic = document.getElementById('topic').value;   
-    const selectedOption = document.querySelector('#size option:checked');
-    rows = selectedOption.dataset.rows;
-    cols = selectedOption.dataset.cols;
-    size = rows;
+async function buildGame() {
+    topic = document.getElementById('topic').value;
+    let selectedOption = document.querySelector('#size option:checked');
+    let rows = selectedOption.dataset.rows;
+    let cols = selectedOption.dataset.cols;
 
     //set CSS Property
-    document.documentElement.style.setProperty('--size', size);
-     
+    document.documentElement.style.setProperty('--size', rows);
+
     //Display the game-screen
     document.getElementById('start-screen').classList.add('hidden');
     document.getElementById('game').classList.remove('hidden');
@@ -37,12 +29,11 @@ async function startGame() {
     generatePlayfield(rows, cols);
 
     //create card array with colors and gifs
-    const cardArray = await generateCards();
+    const cardArray = await generateCards(rows, cols);
 
     //create random shuffled array with every card twice
     shuffledArray = [...cardArray, ...cardArray];
     shuffledArray = shuffledArray.sort((a, b) => 0.5 - Math.random());
-    console.log(shuffledArray);
 }
 
 
@@ -64,14 +55,14 @@ function generatePlayfield(rows, cols) {
     }
 }
 
-async function generateCards() {
+async function generateCards(rows, cols) {
     // playfield size
-    img_count = rows * cols / 2;
+    let img_count = rows * cols / 2;
 
     //generate an array with a color and a gif
     const cardArray = [];
     const colorArray = generateHslaColors(50, 40, 1.0, img_count);
-    const gifArray = await fetchGIFs();
+    const gifArray = await fetchGIFs(img_count);
     for (const i in colorArray) {
         cardArray.push({
             color: colorArray[i],
@@ -94,7 +85,7 @@ function generateHslaColors(saturation, lightness, alpha, amount) {
     return colors;
 }
 
-async function fetchGIFs() {
+async function fetchGIFs(img_count) {
     let APIKey = "PxvvXnrkxxmzpfL8fePtSHBDWxVcNVQd";
     let url = "https://api.giphy.com/v1/gifs/search?api_key=" + APIKey + "&q=" + topic + "&limit=" + img_count;
     const gifArray = [];
@@ -116,8 +107,7 @@ async function fetchGIFs() {
 
 //show color in the clicked field 
 async function showColor(event) {
-    if (isProcessing) return;
-    let td = event.target.closest("td"); 
+    let td = event.target.closest("td");
     currentId = td.id;
     let currentGif = shuffledArray[currentId].gif;
     currentColor = shuffledArray[currentId].color;
@@ -135,8 +125,6 @@ async function showColor(event) {
     if (!td.querySelector("img")) {
         const img = document.createElement("img");
         img.src = currentGif;
-        /*img.style.width = "3em";
-        img.style.height = "3em";*/
         td.querySelector(".back").appendChild(img);
     } else {
         td.querySelector("img").style.visibility = "visible";
@@ -144,10 +132,7 @@ async function showColor(event) {
 
     // Check game every second move
     if (count % 2 == 1) {
-        isProcessing = true;
-        await sleep(1500);
-        checkGame();
-        isProcessing = false;
+        checkGame(1500);
     }
 
     lastColor = currentColor;
@@ -156,14 +141,16 @@ async function showColor(event) {
 }
 
 // Check game adjustment: Flip the cards back if not a pair
-async function checkGame() {
+async function checkGame(milSec) {
     const currentCard = cells[currentId].querySelector(".card");
     const lastCard = cells[lastId].querySelector(".card");
     if (currentColor != lastColor) {
+        await sleep(milSec);
         currentCard.classList.remove("flipped");
         lastCard.classList.remove("flipped");
     }
-    else{
+    else {
+        await sleep(milSec);
         currentCard.remove();
         lastCard.remove();
     }
@@ -179,10 +166,13 @@ function checkEndGame() {
     for (let card of allCards) {
         if (!card.classList.contains('flipped')) return false;
     }
+    displayEndMessage();
+}
+
+function displayEndMessage() {
     //create "You solved it" message
     let allert = document.createElement("h3");
     let solvedIt = document.createTextNode("Du hast es gelöst!");
-    let table = document.getElementById("memory");
     allert.appendChild(solvedIt);
     table.parentNode.insertBefore(allert, table.nextSibling);
 

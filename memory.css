@@ -48,7 +48,6 @@ select, input {
 }
 
 td {
-    z-index: 0;
     border: 2px solid #ddd;
     text-align: center;
     vertical-align: middle;
@@ -81,7 +80,10 @@ td img {
 
 td:hover {
     transform: scale(1.05);
-    /*background-color: #e0e0e0;*/
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    z-index: 2;
+    position: relative; /* Aktiviert den z-index */
+
 }
 
 td:not([id]):hover{
